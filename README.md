@@ -34,7 +34,7 @@ O resultado da consulta retornado por *useQuery* contém todas as informações 
 
 O objeto *result* contém alguns estados muito importantes dos quais você precisa estar ciente para ser produtivo. Uma query(consulta) só pode estar em um dos seguintes estados em um determinado momento:
 
-* **isPending** ou **status === 'pending'**- A consulta ainda não possui dados;
+* **isLoading** ou **status === 'loading'**- A consulta ainda não possui dados;
 * **isError** ou **status === 'error'**- A consulta encontrou um erro;
 * **isSuccess** ou **status === 'success'** - A consulta foi bem-sucedida e os dados estão disponíveis.
 
