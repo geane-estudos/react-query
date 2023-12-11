@@ -9,7 +9,13 @@
 - [2. Queries](#2-queries)
 - [2.1. FetchStatus ](#21-fetch-status)
 - [3. Query Keys](#3-query-keys)
-- [4. Query Functions]()
+- [3.1 Query Keys Simples](#31-query-keys-simples)
+- [3.2 Array Keys com variáveis](#32-array-keys-com-variáveis)
+- [4. Query Functions](#4-query-functions)
+- [4.1 Tratamento e lançamento de erros](#41-tratamento-e-lançamento-de-erros)
+- [4.2 Variáveis Query Function](#42-variáveis-query-function)
+- [5. Query Function Context](#5query-function-context)
+
 
 ### 1. Overview
 TanStack Query (formalmente conhecido como React Query) é frequentemente descrito como a biblioteca de busca de dados ausentes para aplicativos da web, mas em termos mais técnicos, facilita muito a busca, o armazenamento em cache, a sincronização e a atualização do estado do servidor em seus aplicativos da web;
@@ -73,3 +79,75 @@ Portanto, lembre-se de que uma consulta pode estar **pending** sem realmente bus
 * O **fetchStatus** fornece informações sobre **queryFn**: ​​Está funcionando ou não?
 
 ### 3. Query Keys
+Basicamente, o TanStack Query gerencia o cache de consultas para você com base nas chaves de consulta. As chaves de consulta devem ser um array no nível superior e podem ser tão simples quanto um array com uma única string ou tão complexas quanto um array de muitas strings e objetos aninhados. Contanto que a chave de consulta seja serializável e exclusiva para os dados da consulta , você poderá usá-la!
+
+#### 3.1 Query Keys Simples
+A forma mais simples de uma chave é um array com valores constantes. Este formato é útil para:
+
+* Recursos genéricos de lista/índice.
+* Recursos não hierárquicos.
+
+![Alt text](Images/query-keys.png)
+
+#### 3.2 Array Keys com variáveis
+Quando uma query precisa de mais informações para descrever exclusivamente seus dados, você pode usar um array com uma string e qualquer número de objetos serializáveis ​​para descrevê-la. Isso é útil para:
+
+* Recursos hierárquicos ou aninhados
+    * É comum passar um ID, índice ou outro primitivo para identificar exclusivamente o item
+* Queries com parâmetros adicionais
+    * É comum passar um objeto de opções adicionais
+
+![Alt text](Images/query-keys-variables.png)
+
+
+Não importa a ordem das chaves nos objetos, todas as consultas a seguir são consideradas iguais:
+![Alt text](Images/queries.png)
+
+As query keys a seguir, entretanto, não são iguais. A ordem dos itens do array é importante!
+![Alt text](Images/queries2.png)
+
+#### Se a sua query function depende de uma variável, inclua-a na sua query key
+
+Como as chaves de consulta descrevem exclusivamente os dados que estão buscando, elas devem incluir quaisquer variáveis ​​que você usar em sua função de consulta que sejam alteradas . Por exemplo:
+
+![Alt text](Images/query-key.png)
+
+Observe que as query keys atuam como dependências para suas query functions. Adicionar variáveis ​​dependentes à sua query key garantirá que as consultas sejam armazenadas em cache de forma independente e que sempre que uma variável for alterada, as consultas serão refeitas automaticamente (dependendo das suad configurações *staleTime*).
+
+### 4. Query Functions
+Uma query function pode ser literalmente *qualquer função que retorne uma promessa*. A promessa retornada deve resolver os dados ou gerar um erro .
+
+Todas as opções a seguir são configurações de query function válidas:
+![Alt text](Images/query-function.png)
+
+#### 4.1 Tratamento e lançamento de erros
+Para que o TanStack Query determine que uma consulta apresentou erro, a query function deve lançar ou retornar uma promessa rejeitada . Qualquer erro gerado na função de consulta persistirá no estado **error** da consulta.
+![Alt text](Images/handling-errors.png)
+
+##### Uso com fetch e outros clientes que não lançam por padrão
+Embora a maioria dos utilitários como **axios** ou **graphql-request** gere erros automaticamente para chamadas HTTP malsucedidas, alguns utilitários como **fetch** não lançam erros por padrão. Se for esse o caso, você precisará lançá-los por conta própria. Aqui está uma maneira simples de fazer isso com a **fetch** API popular:
+![Alt text](Images/query-fetch.png)
+
+#### 4.2 Variáveis Query Function 
+As query keys não servem apenas para identificar exclusivamente os dados que você está buscando, mas também são convenientemente passadas para sua query function como parte do QueryFunctionContext. Embora nem sempre seja necessário, isso possibilita extrair suas query functions, se necessário:
+![Alt text](Images/query-var.png)
+
+#### 5.Query Function Context
+O **QueryFunctionContext** é o objeto passado para cada query function. Isso consiste de:
+
+* **`queryKey: QueryKey`**: Query Keys
+* **`signal?: AbortSignal`**
+    * Instância **AbortSignal** fornecida por TanStack Query
+    * Pode ser usado para cancelamento de consulta
+* **`meta: Record<string, unknown> | undefined`**
+    * um campo opcional que você pode preencher com informações adicionais sobre sua consulta
+
+Além disso, as Consultas Infinitas obtêm as seguintes opções:
+
+* **`pageParam: TPageParam`**
+    * o parâmetro de página usado para buscar a página atual
+* **`direction: 'forward' | 'backward'`**
+    * a direção da busca da página atual
+
+
+[TanStack Query](https://tanstack.com/query/latest)
