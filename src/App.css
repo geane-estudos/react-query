@@ -1,0 +1,35 @@
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: rgb(226 238 255);
+}
+
+.form {
+  padding: 10rem;
+}
+
+button, input {
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  margin:0.2rem
+}
+
+input {
+  width: 15rem;
+}
+
+button {
+  background-color: rgb(181 213 255);
+}
+
+button:hover {
+  background-color: rgb(77 120 189);
+}
+
+.response {
+  text-align: center;
+  padding: 2rem;
+
+}
