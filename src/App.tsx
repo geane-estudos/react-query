@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import "./App.css";
 import { useQuery } from "react-query";
 
@@ -18,7 +18,7 @@ function App() {
 
   const {isError, isFetched, isSuccess} = useQuery('cep', handleSubmit);
 
-
+console.log(response)
   return (
     <form onSubmit={handleSubmit} className="form">
       <label htmlFor="BuscarCEP">
@@ -41,4 +41,4 @@ function App() {
   );
 }
 
-export default App;
+export default memo(App);
