@@ -13,12 +13,18 @@ function App() {
   async function handleSubmit(event: any) {
     event.preventDefault();
     const fetchDados = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-    return fetchDados.json().then((data) => setResponse(data));
+    return fetchDados.json()
+    .then((data) => {
+      if (data.erro) {
+        console.log("Cep inexistente");
+        setResponse(data);
+      }
+    });
   }
 
-  const {isError, isFetched, isSuccess} = useQuery('cep', handleSubmit);
+  const { isError, isFetched, isSuccess } = useQuery("cep", handleSubmit);
 
-console.log(response)
+  console.log(response);
   return (
     <form onSubmit={handleSubmit} className="form">
       <label htmlFor="BuscarCEP">
@@ -33,10 +39,13 @@ console.log(response)
         />
       </label>
       <button>Buscar CEP</button>
-      <p>A busca foi realizada? {isFetched ? 'Sim' : 'Não'}</p>
-      <p> A busca foi bem sucedida? {isSuccess? 'Sim': "Não"}</p>
-      <p> A consulta encontrou um erro? {isError? 'Não': "Sim"}</p>
-      <p className="response"><strong>Dados da busca: </strong>{JSON.stringify(response)}</p>
+      <p>A busca foi realizada? {isFetched ? "Sim" : "Não"}</p>
+      <p> A busca foi bem sucedida? {isSuccess ? "Sim" : "Não"}</p>
+      <p> A consulta encontrou um erro? {isError ? "Não" : "Sim"}</p>
+      <p className="response">
+        <strong>Dados da busca: </strong>
+        {JSON.stringify(response)}
+      </p>
     </form>
   );
 }
