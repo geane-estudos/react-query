@@ -19,6 +19,7 @@ function App() {
         console.log("Cep inexistente");
         setResponse(data);
       }
+      setResponse(data)
     });
   }
 
