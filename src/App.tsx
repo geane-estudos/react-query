@@ -1,4 +1,4 @@
-import { useState, memo } from "react";
+import { useState, memo, useCallback } from "react";
 import "./App.css";
 import { useQuery } from "react-query";
 
@@ -10,18 +10,16 @@ function App() {
     setCep(event.target.value);
   }
 
-  async function handleSubmit(event: any) {
+  const handleSubmit = useCallback(async function (event: any) {
     event.preventDefault();
     const fetchDados = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-    return fetchDados.json()
-    .then((data) => {
+    return fetchDados.json().then((data) => {
       if (data.erro) {
         console.log("Cep inexistente");
-        setResponse(data);
       }
-      setResponse(data)
+      setResponse(data);
     });
-  }
+  }, []);
 
   const { isError, isFetched, isSuccess } = useQuery("cep", handleSubmit);
 
