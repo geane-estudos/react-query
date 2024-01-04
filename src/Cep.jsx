@@ -1,16 +1,16 @@
 import { useState, memo, useCallback } from "react";
 import "./App.css";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 
 function App() {
   const [cep, setCep] = useState("");
   const [response, setResponse] = useState();
 
-  function handleChange(event: any) {
+  function handleChange(event) {
     setCep(event.target.value);
   }
 
-  const handleSubmit = useCallback(async function (event: any) {
+  const handleSubmit = useCallback(async function (event) {
     event.preventDefault();
     const fetchDados = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
     return fetchDados.json().then((data) => {
@@ -19,9 +19,9 @@ function App() {
       }
       setResponse(data);
     });
-  }, []);
+  }, [cep]);
 
-  const { isError, isFetched, isSuccess } = useQuery("cep", handleSubmit);
+  const { isError, isFetched, isSuccess } = useQuery({queryKey: ["cep"], queryFn: handleSubmit});
 
   console.log(response);
   return (
